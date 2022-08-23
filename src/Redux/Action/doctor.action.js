@@ -1,6 +1,7 @@
-import { deleteDoctorData, getdoctorData, postDoctorData, putDoctorData } from "../../common/apis/doctor.api";
-import { BASE_URL } from "../../Urls/base_url"
+import { deleteDoctorData, getdoctorData,  putDoctorData } from "../../common/apis/doctor.api";
 import * as ActionType from '../Action/Action_Type'
+import { collection, addDoc } from "firebase/firestore"; 
+import { db } from "../../firebase";
 
 export const getDoctor = () => (dispatch) => {
 
@@ -26,45 +27,18 @@ export const errorDoctor = (error) => (dispatch) => {
   dispatch({ type: ActionType.ERROR_DOCTOR, payload: error })
 }
 
-export const addDoctorData = (data) => (dispatch) => {
+export const addDoctorData = (data)  => async (dispatch) => {
   try {
     dispatch(loadingDoctor());
-    setTimeout(() => {
-      return postDoctorData(data)
-        .then((data) => dispatch(({ type: ActionType.ADD_DOCTOR, payload: data.data })))
-        .catch(error => dispatch(errorDoctor(error.message)))
-    }, 2000);
-
-
    
-    //   return fetch(BASE_URL + 'doctors', {
-    //     method: 'POST', // or 'PUT'
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    //   })
-    //     .then(response => {
-    //       if (response.ok) {
-    //         return response;
-    //       } else {
-    //         var error = new Error('Error ' + response.status + ': ' + response.statusText);
-    //         error.response = response;
-    //         throw error;
-    //       }
-    //     },
-    //       error => {
-    //         var errmess = new Error(error.message);
-    //         throw errmess;
-    //       })
-    //     .then(response => response.json())
-    //     .then(adddoctor => dispatch(({ type: ActionType.ADD_DOCTOR, payload: adddoctor })))
-    //     .catch(error => dispatch(errorDoctor(error.message)))
-    // }, 2000);
 
+    const docRef = await addDoc(collection(db, "doctors"), data);
+    dispatch({type : ActionType.ADD_MEDICINE, payload : {id:docRef.id, ...data}})
+    // console.log("Document written with ID: ", docRef.id);
 
   }
   catch (error) {
+    console.error("Error adding document: ", error);
     dispatch(errorDoctor(error))
   }
 }

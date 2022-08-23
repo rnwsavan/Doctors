@@ -94,21 +94,21 @@ function Doctor(props) {
     }
 
     const handleSubmitdata = (value) => {
-        let localdata = JSON.parse(localStorage.getItem("doctor"))
+        // let localdata = JSON.parse(localStorage.getItem("doctor"))
 
-        let data = {
-            id: Math.floor(Math.random() * 1000),
-            ...value
-        }
+        // let data = {
+        //     id: Math.floor(Math.random() * 1000),
+        //     ...value
+        // }
 
-        if (localdata === null) {
-            localStorage.setItem("doctor", JSON.stringify([data]))
-        } else {
-            localdata.push(data)
-            localStorage.setItem("doctor", JSON.stringify(localdata))
-        }
+        // if (localdata === null) {
+        //     localStorage.setItem("doctor", JSON.stringify([data]))
+        // } else {
+        //     localdata.push(data)
+        //     localStorage.setItem("doctor", JSON.stringify(localdata))
+        // }
         setOpen(false);
-        dispatch(addDoctorData(data))
+        dispatch(addDoctorData(value))
         // loadData();
     }
     const columns = [
