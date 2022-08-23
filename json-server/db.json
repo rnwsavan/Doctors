@@ -1,0 +1,83 @@
+{
+  "medicines": [
+    {
+      "id": 5,
+      "name": "pler",
+      "price": 90,
+      "quantity": "22",
+      "expiry": "2022"
+    },
+    {
+      "id": 6,
+      "name": "qwde",
+      "price": 100
+    },
+    {
+      "id": 506,
+      "name": "gfd",
+      "price": "20",
+      "quantity": "200",
+      "expiry": "2021"
+    },
+    {
+      "id": 605,
+      "name": "asodariyasavanvijaybhai",
+      "price": "56",
+      "quantity": "400",
+      "expiry": "2022"
+    },
+    {
+      "id": 260,
+      "name": "sagar",
+      "price": "32",
+      "quantity": "21",
+      "expiry": "2023"
+    },
+    {
+      "id": 920,
+      "name": "asodariyasavan",
+      "price": "56",
+      "quantity": "50",
+      "expiry": "2027"
+    }
+  ],
+  "doctors": [
+    {
+      "id": 1,
+      "name": "AJAY",
+      "age": "34",
+      "degree": "BAMS",
+      "email": "asodariyavijaybhai104@gmail.com"
+    },
+    {
+      "id": 2,
+      "name": "AXAY",
+      "age": 32,
+      "degree": "M.D"
+    },
+    {
+      "id": 3,
+      "name": "BHARGAV",
+      "age": 34,
+      "degree": "MS",
+      "email": "185512"
+    },
+    {
+      "id": 101,
+      "name": "savan",
+      "age": "22",
+      "email": "asodariyavijaybhai104@gmail.com",
+      "degree": "B.COM"
+    },
+    {
+      "id": 240,
+      "name": "buy haiken ashi",
+      "age": "32",
+      "email": "eqer@gmail.com",
+      "degree": "Md"
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}
