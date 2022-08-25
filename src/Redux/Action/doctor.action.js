@@ -1,7 +1,8 @@
 import { deleteDoctorData, getdoctorData, putDoctorData } from "../../common/apis/doctor.api";
 import * as ActionType from '../Action/Action_Type'
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db, storage } from "../../firebase";
+import { ref, uploadBytes } from "firebase/storage";
 
 export const getDoctor = () => async (dispatch) => {
 
@@ -41,6 +42,12 @@ export const errorDoctor = (error) => (dispatch) => {
 export const addDoctorData = (data) => async (dispatch) => {
   try {
     dispatch(loadingDoctor());
+
+    const storageRef = ref(storage, "doctors/"+data.upload.name);
+
+        uploadBytes(storageRef, data.upload).then((snapshot) => {
+            console.log('Uploaded a blob or file!');
+        });
 
 
     const docRef = await addDoc(collection(db, "doctors"), data);

@@ -16,12 +16,12 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useSelector, useDispatch } from 'react-redux';
 import { addDoctorData, deleteDoctor, getDoctor, upadateDoctor } from '../../Redux/Action/doctor.action';
 import { useContext } from 'react';
-import { TaskContext} from '../TaskOfContext/TaskContextProvider';
+import { TaskContext } from '../TaskOfContext/TaskContextProvider';
 import '../../App.css'
 
 function Doctor(props) {
     const theme = useContext(TaskContext);
-    console.log(theme); 
+    // console.log(theme);
 
 
     const [open, setOpen] = React.useState(false);
@@ -52,6 +52,7 @@ function Doctor(props) {
         age: yup.string().required('Please Enter Doctor Age'),
         email: yup.string().required('Please Enter Doctor Email'),
         degree: yup.string().required('Please Enter Doctor Degree'),
+        upload: yup.mixed().required("Please Upload Image"),
     }
 
     let schema = yup.object().shape(doctor);
@@ -61,7 +62,8 @@ function Doctor(props) {
             name: '',
             age: '',
             email: '',
-            degree: ''
+            degree: '',
+            upload: '',
         },
         validationSchema: schema,
         onSubmit: (value, { resetForm }) => {
@@ -171,131 +173,146 @@ function Doctor(props) {
         [])
 
     return (
-    <div className={`${theme.theme}`}>
-                
+        <div className={`${theme.theme}`}>
+
             {
-                
+
                 doctorname.isLoading ? (
                     <p style={{ fontSize: '25px', fontWeight: 'bold', margin: '50px' }}>Please Loading...</p>
-                ):
-                (doctorname.error !== '' ?
-                <p style={{ fontSize: '25px', fontWeight: 'bold', margin: '50px' }}>{doctorname.error}</p>
-                : <Box>
-                <Container>
-                    <div className={`d-flex align-items-center fixed-top ${theme.theme}`}>
-    
-                    
-                        <center>
-                            <h1 className='mb-5'>Doctor Data</h1>
-                            <button className='mb-5'  onClick={() => theme.toogle_theme(theme.theme)}>Change</button>
-                            <Button className='mt-5' variant="outlined" onClick={handleClickOpen}>
-                                Add Doctor Data
-                            </Button>
-                           
-                        </center>
-    
-                        <div style={{ height: 400, width: '100%', margin: '30px' }}>
-                            <DataGrid
-                                rows={doctorname.doctors}
-                                columns={columns}
-                                pageSize={5}
-                                rowsPerPageOptions={[5]}
-                                checkboxSelection
-                            />
-                        </div>
-                        <Dialog open={open} onClose={handleClose}>
-                            <DialogTitle>Add Doctor Data</DialogTitle>
-                            <Formik value={formik}>
-                                <Form onSubmit={formik.handleSubmit}>
-                                    <DialogContent>
-    
-                                        <TextField
-                                            margin="dense"
-                                            id="name"
-                                            label="name"
-                                            type="name"
-                                            fullWidth
-                                            variant="standard"
-                                            onChange={formik.handleChange}
-                                            defaultValue={formik.values.name}
-                                            helperText={formik.errors.name}
-                                            error={formik.errors.name && formik.touched.name}
-                                            onBlur={formik.handleBlur}
-    
+                ) :
+                    (doctorname.error !== '' ?
+                        <p style={{ fontSize: '25px', fontWeight: 'bold', margin: '50px' }}>{doctorname.error}</p>
+                        : <Box>
+                            <Container>
+                                <div className={`d-flex align-items-center fixed-top ${theme.theme}`}>
+
+
+                                    <center>
+                                        <h1 className='mb-5'>Doctor Data</h1>
+                                        <button className='mb-5' onClick={() => theme.toogle_theme(theme.theme)}>Change</button>
+                                        <Button className='mt-5' variant="outlined" onClick={handleClickOpen}>
+                                            Add Doctor Data
+                                        </Button>
+
+                                    </center>
+
+                                    <div style={{ height: 400, width: '100%', margin: '30px' }}>
+                                        <DataGrid
+                                            rows={doctorname.doctors}
+                                            columns={columns}
+                                            pageSize={5}
+                                            rowsPerPageOptions={[5]}
+                                            checkboxSelection
                                         />
-    
-                                        <TextField
-                                            margin="dense"
-                                            id="age"
-                                            label="age"
-                                            type="age"
-                                            fullWidth
-                                            variant="standard"
-                                            onChange={formik.handleChange}
-                                            defaultValue={formik.values.age}
-                                            helperText={formik.errors.age}
-                                            error={formik.errors.age && formik.touched.age}
-                                            onBlur={formik.handleBlur}
-                                        />
-                                        <TextField
-                                            margin="dense"
-                                            id="email"
-                                            label="email"
-                                            fullWidth
-                                            variant="standard"
-                                            onChange={formik.handleChange}
-                                            defaultValue={formik.values.email}
-                                            helperText={formik.errors.email}
-                                            error={formik.errors.email && formik.touched.email}
-                                            onBlur={formik.handleBlur}
-    
-                                        />
-                                        <TextField
-                                            margin="dense"
-                                            id="degree"
-                                            label="degree"
-                                            fullWidth
-                                            variant="standard"
-                                            onChange={formik.handleChange}
-                                            defaultValue={formik.values.degree}
-                                            helperText={formik.errors.degree}
-                                            error={formik.errors.degree && formik.touched.degree}
-                                            onBlur={formik.handleBlur}
-                                        />
+                                    </div>
+                                    <Dialog open={open} onClose={handleClose}>
+                                        <DialogTitle>Add Doctor Data</DialogTitle>
+                                        <Formik value={formik}>
+                                            <Form onSubmit={formik.handleSubmit}>
+                                                <DialogContent>
+
+                                                    <TextField
+                                                        margin="dense"
+                                                        id="name"
+                                                        label="name"
+                                                        type="name"
+                                                        fullWidth
+                                                        variant="standard"
+                                                        onChange={formik.handleChange}
+                                                        defaultValue={formik.values.name}
+                                                        helperText={formik.errors.name}
+                                                        error={formik.errors.name && formik.touched.name}
+                                                        onBlur={formik.handleBlur}
+
+                                                    />
+
+                                                    <TextField
+                                                        margin="dense"
+                                                        id="age"
+                                                        label="age"
+                                                        type="age"
+                                                        fullWidth
+                                                        variant="standard"
+                                                        onChange={formik.handleChange}
+                                                        defaultValue={formik.values.age}
+                                                        helperText={formik.errors.age}
+                                                        error={formik.errors.age && formik.touched.age}
+                                                        onBlur={formik.handleBlur}
+                                                    />
+                                                    <TextField
+                                                        margin="dense"
+                                                        id="email"
+                                                        label="email"
+                                                        fullWidth
+                                                        variant="standard"
+                                                        onChange={formik.handleChange}
+                                                        defaultValue={formik.values.email}
+                                                        helperText={formik.errors.email}
+                                                        error={formik.errors.email && formik.touched.email}
+                                                        onBlur={formik.handleBlur}
+
+                                                    />
+                                                    <TextField
+                                                        margin="dense"
+                                                        id="degree"
+                                                        label="degree"
+                                                        fullWidth
+                                                        variant="standard"
+                                                        onChange={formik.handleChange}
+                                                        defaultValue={formik.values.degree}
+                                                        helperText={formik.errors.degree}
+                                                        error={formik.errors.degree && formik.touched.degree}
+                                                        onBlur={formik.handleBlur}
+                                                    />
+                                                    <TextField
+                                                        autoFocus
+                                                        margin="dense"
+                                                        id="uploadFile"
+                                                        label="Upload File"
+                                                        name='upload'
+                                                        type="file"
+                                                        fullWidth
+                                                        variant="standard"
+                                                        onChange={e => formik.setFieldValue('upload', e.target.files[0])}
+                                                    />
+                                                    {
+                                                        formik.errors.upload ?
+                                                            <p className='error'>{formik.errors.upload}</p> : null
+                                                    }
+                                                    <DialogActions>
+                                                        <Button onClick={handleClose}>Cancel</Button>
+                                                        {
+                                                            update ? <Button type="submit">Update</Button> :
+                                                                <Button type="submit">Submit</Button>
+                                                        }
+                                                    </DialogActions>
+                                                </DialogContent>
+                                            </Form>
+                                        </Formik>
+                                    </Dialog>
+
+
+                                    <Dialog
+                                        open={Dopen}
+                                        onClose={handleClose}
+                                        aria-labelledby="alert-dialog-title"
+                                        aria-describedby="alert-dialog-description"
+                                    >
+                                        <DialogTitle id="alert-dialog-title">
+                                            {"Are You Sure Delete Data?"}
+                                        </DialogTitle>
                                         <DialogActions>
-                                            <Button onClick={handleClose}>Cancel</Button>
-                                            {
-                                                update ? <Button type="submit">Update</Button> :
-                                                    <Button type="submit">Submit</Button>
-                                            }
+                                            <Button onClick={handleClose}>NO</Button>
+                                            <Button onClick={handleDelete}>
+                                                YES
+                                            </Button>
                                         </DialogActions>
-                                    </DialogContent>
-                                </Form>
-                            </Formik>
-                        </Dialog>
-    
-    
-                        <Dialog
-                            open={Dopen}
-                            onClose={handleClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                        >
-                            <DialogTitle id="alert-dialog-title">
-                                {"Are You Sure Delete Data?"}
-                            </DialogTitle>
-                            <DialogActions>
-                                <Button onClick={handleClose}>NO</Button>
-                                <Button onClick={handleDelete}>
-                                    YES
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-                    </div>
-                </Container>
-            </Box>)
+                                    </Dialog>
+                                </div>
+                            </Container>
+                        </Box>)
             }
-       </div>
+        </div>
     );
 }
 
