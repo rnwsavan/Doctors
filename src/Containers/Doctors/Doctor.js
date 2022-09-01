@@ -119,10 +119,16 @@ function Doctor(props) {
         { field: 'age', headerName: ' Age', width: 130 },
         { field: 'email', headerName: 'Email', width: 130 },
         { field: 'degree', headerName: 'Degree', width: 130 },
+        { field: 'url', headerName: 'Image', width: 130 ,
+
+        renderCell: (params) => (
+            <img src={params.row.url} width="50" height={50}/>
+        )
+    },
         {
             field: 'Delete', headerName: 'Delete', width: 130,
             renderCell: (params) => (
-                <IconButton aria-label="delete" onClick={() => handleClickDOpen(params.id)}>
+                <IconButton aria-label="delete" onClick={() => handleClickDOpen(params.row)}>
                     <DeleteIcon />
                 </IconButton>
             )
@@ -136,10 +142,19 @@ function Doctor(props) {
             )
         }
     ];
-    const handleEdit = (data) => {
+    const handleEdit = (params) => {
+        console.log(params);
+        
         setOpen(true)
-        setUpdate(data)
-        formik.setValues(data);
+        setUpdate(true)
+        formik.setValues({
+
+            ...params,
+            upload: params.url 
+            
+        }
+           
+            );
     }
 
     const handleDelete = (id) => {
@@ -171,6 +186,8 @@ function Doctor(props) {
             dispatch(getDoctor())
         },
         [])
+
+        console.log(formik.errors);
 
     return (
         <div className={`${theme.theme}`}>
@@ -264,7 +281,7 @@ function Doctor(props) {
                                                         error={formik.errors.degree && formik.touched.degree}
                                                         onBlur={formik.handleBlur}
                                                     />
-                                                    <TextField
+                                                    <input
                                                         autoFocus
                                                         margin="dense"
                                                         id="uploadFile"
@@ -274,11 +291,9 @@ function Doctor(props) {
                                                         fullWidth
                                                         variant="standard"
                                                         onChange={e => formik.setFieldValue('upload', e.target.files[0])}
+                                                        onBlur={formik.handleBlur}
                                                     />
-                                                    {
-                                                        formik.errors.upload ?
-                                                            <p className='error'>{formik.errors.upload}</p> : null
-                                                    }
+                                                    
                                                     <DialogActions>
                                                         <Button onClick={handleClose}>Cancel</Button>
                                                         {

@@ -2,7 +2,7 @@ import { deleteDoctorData, getdoctorData, putDoctorData } from "../../common/api
 import * as ActionType from '../Action/Action_Type'
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db, storage } from "../../firebase";
-import { ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export const getDoctor = () => async (dispatch) => {
 
@@ -43,15 +43,39 @@ export const addDoctorData = (data) => async (dispatch) => {
   try {
     dispatch(loadingDoctor());
 
-    const storageRef = ref(storage, "doctors/"+data.upload.name);
+    const rendomStr = Math.floor(Math.random() * 10000000).toString();
 
-        uploadBytes(storageRef, data.upload).then((snapshot) => {
-            console.log('Uploaded a blob or file!');
-        });
+    const doctorRef = ref(storage, "doctors/" + rendomStr);
+
+    uploadBytes(doctorRef, data.upload)
+      .then((snapshot) => {
+        getDownloadURL(snapshot.ref)
+          .then(async (url) => {
+            const docRef = await addDoc(collection(db, "doctors"), {
+              age: data.age,
+              degree: data.degree,
+              email: data.email,
+              name: data.name,
+              url: url,
+              fileName: rendomStr
+            });
+            dispatch({
+              type: ActionType.ADD_DOCTOR, payload: {
+                id: docRef.id,
+                age: data.age,
+                degree: data.degree,
+                email: data.email,
+                name: data.name,
+                url: url,
+                fileName: rendomStr
+              }
+            })
+          })
+      });
 
 
-    const docRef = await addDoc(collection(db, "doctors"), data);
-    dispatch({ type: ActionType.ADD_DOCTOR, payload: { id: docRef.id, ...data } })
+    // const docRef = await addDoc(collection(db, "doctors"), data);
+    // dispatch({ type: ActionType.ADD_DOCTOR, payload: { id: docRef.id, ...data } })
     // console.log("Document written with ID: ", docRef.id);
 
   }
@@ -61,15 +85,24 @@ export const addDoctorData = (data) => async (dispatch) => {
   }
 }
 
-export const deleteDoctor = (id) => async (dispatch) => {
+export const deleteDoctor = (data) => async (dispatch) => {
   try {
-    await deleteDoc(doc(db, "doctors", id));
-    deleteDoctorData(id)
-    // .then(dispatch(({ type: ActionType.DELETE_DOCTOR, payload: id })))
-    // .catch(error => dispatch(errorDoctor(error.message)))
 
-    dispatch({ type: ActionType.DELETE_DOCTOR, payload: id })
+    const deleteRef = ref(storage, 'doctors/' + data.fileName);
 
+
+    deleteObject(deleteRef).then(async () => {
+
+      await deleteDoc(doc(db, "doctors", data.id));
+      // deleteDoctorData(id)
+
+
+      dispatch({ type: ActionType.DELETE_DOCTOR, payload: data.id })
+
+    }).catch((error) => {
+      dispatch(errorDoctor(error))
+    });
+    // deleteDoctorData(id)
   }
   catch (error) {
     dispatch(errorDoctor(error))
@@ -79,20 +112,59 @@ export const deleteDoctor = (id) => async (dispatch) => {
 export const upadateDoctor = (data) => async (dispatch) => {
   try {
     putDoctorData(data)
-    // .then((data) => dispatch(({ type: ActionType.UPDATE_DOCTOR, payload: data.data })))
-    // .catch(error => dispatch(errorDoctor(error.message)))
-
     const DoctorRef = doc(db, "doctors", data.id);
+    console.log(data);
 
-    // Set the "capital" field of the city 'DC'
-    await updateDoc(DoctorRef, {
-      age : data.age,
-      degree : data.degree,
-      email : data.email,
-      name : data.name
-    });
+    if (typeof data.upload === "string") {
 
-    dispatch({ type: ActionType.UPDATE_DOCTOR, payload: data})
+      await updateDoc(DoctorRef, {
+        age: data.age,
+        degree: data.degree,
+        email: data.email,
+        name: data.name,
+        url: data.url
+      });
+
+      dispatch({ type: ActionType.UPDATE_DOCTOR, payload: data })
+    }
+    else {
+      console.log("Data with img")
+      const deleteDocRef = ref(storage, 'doctors/' + data.fileName);
+
+
+      deleteObject(deleteDocRef)
+        .then(
+          async () => {
+
+            const rendomStr = Math.floor(Math.random() * 10000000).toString();
+
+            const doctorRefadd = ref(storage, "doctors/" + rendomStr);
+
+            uploadBytes(doctorRefadd, data.upload)
+
+              .then((snapshot) => {
+                getDownloadURL(snapshot.ref)
+                  .then(async (url) => {
+                    await updateDoc(DoctorRef, {
+                      age: data.age,
+                      degree: data.degree,
+                      email: data.email,
+                      name: data.name,
+                      url: url,
+                      fileName: rendomStr
+                    });
+                    dispatch({
+                      type: ActionType.UPDATE_DOCTOR, payload: {
+                        ...data, url: url,
+                        fileName: rendomStr
+                      }
+                    })
+                  })
+              })
+          })
+    }
+
+
 
   }
   catch (error) {
